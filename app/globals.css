@@ -1,0 +1,225 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Updated to use the provided color palette */
+  --background: #efecdd; /* Cream background */
+  --foreground: #0b3c49; /* Dark teal text */
+  --card: rgba(239, 236, 221, 0.8); /* Semi-transparent cream for glassmorphism */
+  --card-foreground: #0b3c49;
+  --popover: rgba(239, 236, 221, 0.95);
+  --popover-foreground: #0b3c49;
+  --primary: #489299; /* Teal */
+  --primary-foreground: #efecdd;
+  --secondary: #dcf763; /* Lime green */
+  --secondary-foreground: #0b3c49;
+  --muted: rgba(137, 105, 120, 0.1); /* Light purple tint */
+  --muted-foreground: #896978;
+  --accent: #896978; /* Purple/mauve */
+  --accent-foreground: #efecdd;
+  --destructive: #896978;
+  --destructive-foreground: #efecdd;
+  --border: rgba(72, 146, 153, 0.2); /* Teal border with transparency */
+  --input: rgba(239, 236, 221, 0.8);
+  --ring: rgba(220, 247, 99, 0.5); /* Lime green ring */
+  --chart-1: #489299;
+  --chart-2: #dcf763;
+  --chart-3: #896978;
+  --chart-4: #0b3c49;
+  --chart-5: #efecdd;
+  --radius: 1rem;
+  --sidebar: rgba(239, 236, 221, 0.9);
+  --sidebar-foreground: #0b3c49;
+  --sidebar-primary: #489299;
+  --sidebar-primary-foreground: #efecdd;
+  --sidebar-accent: #dcf763;
+  --sidebar-accent-foreground: #0b3c49;
+  --sidebar-border: rgba(72, 146, 153, 0.2);
+  --sidebar-ring: rgba(220, 247, 99, 0.5);
+}
+
+.dark {
+  /* Dark mode using darker variants of the palette */
+  --background: #0b3c49; /* Dark teal background */
+  --foreground: #efecdd; /* Cream text */
+  --card: rgba(11, 60, 73, 0.8); /* Semi-transparent dark teal */
+  --card-foreground: #efecdd;
+  --popover: rgba(11, 60, 73, 0.95);
+  --popover-foreground: #efecdd;
+  --primary: #489299; /* Teal */
+  --primary-foreground: #efecdd;
+  --secondary: #dcf763; /* Lime green */
+  --secondary-foreground: #0b3c49;
+  --muted: rgba(137, 105, 120, 0.2);
+  --muted-foreground: #896978;
+  --accent: #896978; /* Purple/mauve */
+  --accent-foreground: #efecdd;
+  --destructive: #896978;
+  --destructive-foreground: #efecdd;
+  --border: rgba(72, 146, 153, 0.3);
+  --input: rgba(11, 60, 73, 0.8);
+  --ring: rgba(220, 247, 99, 0.5);
+  --chart-1: #489299;
+  --chart-2: #dcf763;
+  --chart-3: #896978;
+  --chart-4: #efecdd;
+  --chart-5: #0b3c49;
+  --sidebar: rgba(11, 60, 73, 0.9);
+  --sidebar-foreground: #efecdd;
+  --sidebar-primary: #489299;
+  --sidebar-primary-foreground: #efecdd;
+  --sidebar-accent: #dcf763;
+  --sidebar-accent-foreground: #0b3c49;
+  --sidebar-border: rgba(72, 146, 153, 0.3);
+  --sidebar-ring: rgba(220, 247, 99, 0.5);
+}
+
+/* Added custom animations and effects */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(220, 247, 99, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(220, 247, 99, 0.6), 0 0 40px rgba(72, 146, 153, 0.3);
+  }
+}
+
+@keyframes pulse-neon {
+  0%,
+  100% {
+    text-shadow: 0 0 10px rgba(220, 247, 99, 0.8), 0 0 20px rgba(220, 247, 99, 0.6), 0 0 30px rgba(220, 247, 99, 0.4);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(220, 247, 99, 1), 0 0 30px rgba(220, 247, 99, 0.8), 0 0 40px rgba(220, 247, 99, 0.6);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.animate-pulse-neon {
+  animation: pulse-neon 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(220, 247, 99, 0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Glassmorphism utility classes */
+.glass {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(239, 236, 221, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(11, 60, 73, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.neon-border {
+  border: 2px solid transparent;
+  background: linear-gradient(var(--background), var(--background)) padding-box,
+    linear-gradient(45deg, #dcf763, #489299, #896978) border-box;
+}
+
+.neon-text {
+  background: linear-gradient(45deg, #dcf763, #489299);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Doodle patterns */
+.doodle-bg {
+  background-image: radial-gradient(circle at 20% 20%, rgba(220, 247, 99, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(72, 146, 153, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 60%, rgba(137, 105, 120, 0.1) 0%, transparent 50%);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    /* Added doodle background pattern */
+    background-image: radial-gradient(circle at 20% 20%, rgba(220, 247, 99, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(72, 146, 153, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 60%, rgba(137, 105, 120, 0.1) 0%, transparent 50%);
+  }
+  button {
+    @apply cursor-pointer;
+  }
+}
