@@ -1,79 +1,47 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CreateEventForm } from "@/components/event-management/create-event-form"
-import { EventCard } from "@/components/event-management/event-card"
-import { EventAnalytics } from "@/components/event-management/event-analytics"
-import { ProtectedRoute } from "@/components/protected-route"
-import { Plus, Search, Filter } from "lucide-react"
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CreateEventForm } from "@/components/event-management/create-event-form";
+import { EventCard } from "@/components/event-management/event-card";
+import { EventAnalytics } from "@/components/event-management/event-analytics";
+import { ProtectedRoute } from "@/components/protected-route";
+import { Plus, Search, Filter } from "lucide-react";
+import { getEvents, updateEventStatus } from "@/lib/actions/organizer.actions";
+import { StatusModal } from "@/components/status-modal";
 
 export default function EventManagePage() {
-  const [showCreateForm, setShowCreateForm] = useState(false)
-  const [showAnalytics, setShowAnalytics] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [events, setEvents] = useState([
-    {
-      id: "1",
-      title: "AI Innovation Hackathon 2024",
-      description:
-        "Build the future of AI with cutting-edge tools and technologies. Join developers, designers, and innovators.",
-      startDate: "2024-03-15T09:00",
-      endDate: "2024-03-17T18:00",
-      location: "San Francisco, CA",
-      type: "hybrid",
-      participants: 247,
-      maxParticipants: "500",
-      prizePool: "$50,000",
-      status: "active",
-      submissions: 45,
-      tracks: ["AI/ML", "Computer Vision", "NLP", "Robotics"],
-    },
-    {
-      id: "2",
-      title: "Web3 Developer Challenge",
-      description:
-        "Create decentralized applications that change the world. Focus on DeFi, NFTs, and blockchain innovation.",
-      startDate: "2024-04-22T10:00",
-      endDate: "2024-04-24T20:00",
-      location: "Virtual Event",
-      type: "online",
-      participants: 189,
-      maxParticipants: "300",
-      prizePool: "$30,000",
-      status: "upcoming",
-      submissions: 0,
-      tracks: ["Web3", "DeFi", "NFTs", "Smart Contracts"],
-    },
-    {
-      id: "3",
-      title: "Climate Tech Solutions",
-      description: "Develop technology solutions for environmental challenges and sustainability.",
-      startDate: "2024-05-10T08:00",
-      endDate: "2024-05-12T19:00",
-      location: "Austin, TX",
-      type: "offline",
-      participants: 0,
-      maxParticipants: "400",
-      prizePool: "$75,000",
-      status: "draft",
-      submissions: 0,
-      tracks: ["Climate Tech", "Sustainability", "Green Energy", "IoT"],
-    },
-  ])
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showAnalytics, setShowAnalytics] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const handleCreateEvent = (newEvent: any) => {
-    setEvents((prev) => [newEvent, ...prev])
-  }
+  const [events, setEvents] = useState<EventWithId[]>([]);
+
+  const [modalEventId, setModalEventId] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const data = await getEvents();
+        setEvents(data);
+      } catch (err) {
+        console.error("❌ Failed to fetch events:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchEvents();
+  }, []);
 
   const filteredEvents = events.filter(
     (event) =>
       event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+      event.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const eventsByStatus = {
     all: filteredEvents,
@@ -81,19 +49,30 @@ export default function EventManagePage() {
     upcoming: filteredEvents.filter((e) => e.status === "upcoming"),
     draft: filteredEvents.filter((e) => e.status === "draft"),
     completed: filteredEvents.filter((e) => e.status === "completed"),
-  }
+  };
+
+  const handleCreateEvent = (newEvent: EventWithId) => {
+    setEvents((prev) => [newEvent, ...prev]);
+  };
+
+  if (loading) return <p>Loading events...</p>;
 
   return (
     <ProtectedRoute requiredRole="organizer">
       <div className="container mx-auto py-4 md:py-8 px-2 md:px-4">
         <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center mb-6 md:mb-8">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">Event Management</h1>
+            <h1 className="text-2xl md:text-3xl font-bold mb-2">
+              Event Management
+            </h1>
             <p className="text-sm md:text-base text-muted-foreground">
               Create and manage your hackathons and tech events
             </p>
           </div>
-          <Button onClick={() => setShowCreateForm(true)} className="w-full md:w-auto">
+          <Button
+            onClick={() => setShowCreateForm(true)}
+            className="w-full md:w-auto"
+          >
             <Plus className="h-4 w-4 mr-2" />
             Create Event
           </Button>
@@ -112,7 +91,10 @@ export default function EventManagePage() {
                   className="pl-10"
                 />
               </div>
-              <Button variant="outline" className="w-full md:w-auto bg-transparent">
+              <Button
+                variant="outline"
+                className="w-full md:w-auto bg-transparent"
+              >
                 <Filter className="h-4 w-4 mr-2" />
                 Filters
               </Button>
@@ -148,14 +130,19 @@ export default function EventManagePage() {
                 <Card>
                   <CardContent className="flex flex-col items-center justify-center py-8 md:py-12">
                     <div className="text-center">
-                      <h3 className="text-base md:text-lg font-medium mb-2">No events found</h3>
+                      <h3 className="text-base md:text-lg font-medium mb-2">
+                        No events found
+                      </h3>
                       <p className="text-sm md:text-base text-muted-foreground mb-4">
                         {status === "all"
                           ? "Create your first event to get started"
                           : `No ${status} events at the moment`}
                       </p>
                       {status === "all" && (
-                        <Button onClick={() => setShowCreateForm(true)} className="w-full md:w-auto">
+                        <Button
+                          onClick={() => setShowCreateForm(true)}
+                          className="w-full md:w-auto"
+                        >
                           <Plus className="h-4 w-4 mr-2" />
                           Create Event
                         </Button>
@@ -169,7 +156,7 @@ export default function EventManagePage() {
                     <EventCard
                       key={event.id}
                       event={event}
-                      onManage={(eventId) => console.log("Manage event:", eventId)}
+                      onManage={() => setModalEventId(event.id)}
                       onAnalytics={(eventId) => setShowAnalytics(eventId)}
                     />
                   ))}
@@ -180,11 +167,56 @@ export default function EventManagePage() {
         </Tabs>
 
         {/* Create Event Modal */}
-        {showCreateForm && <CreateEventForm onClose={() => setShowCreateForm(false)} onSubmit={handleCreateEvent} />}
+        {showCreateForm && (
+          <CreateEventForm
+            onClose={() => setShowCreateForm(false)}
+            onSubmit={handleCreateEvent}
+          />
+        )}
 
         {/* Analytics Modal */}
-        {showAnalytics && <EventAnalytics eventId={showAnalytics} onClose={() => setShowAnalytics(null)} />}
+        {showAnalytics && (
+          <EventAnalytics
+            eventId={showAnalytics}
+            onClose={() => setShowAnalytics(null)}
+          />
+        )}
+
+        {/* Status Change Modal */}
+        {modalEventId && (
+          <StatusModal
+            isOpen={!!modalEventId}
+            onClose={() => setModalEventId(null)}
+            currentStatus={
+              events.find((e) => e.id === modalEventId)?.status ?? "draft"
+            }
+            onSave={async (newStatus) => {
+              if (!modalEventId) return;
+
+              try {
+                const res = await updateEventStatus(modalEventId, newStatus);
+
+                if (res.success) {
+                  console.log("✅ Status updated successfully in DB");
+
+                  // update UI state only if DB update succeeded
+                  setEvents((prev) =>
+                    prev.map((e) =>
+                      e.id === modalEventId ? { ...e, status: newStatus } : e
+                    )
+                  );
+                } else {
+                  console.error("❌ Failed to update status in DB");
+                }
+              } catch (err) {
+                console.error("❌ Error while updating event status:", err);
+              } finally {
+                setModalEventId(null); // close modal either way
+              }
+            }}
+          />
+        )}
       </div>
     </ProtectedRoute>
-  )
+  );
 }

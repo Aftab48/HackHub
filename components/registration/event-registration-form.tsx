@@ -1,34 +1,52 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { useAuth } from "@/lib/auth-context"
-import { X, Users, User } from "lucide-react"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "@/lib/auth-context";
+import { X, Users, User } from "lucide-react";
 
 interface EventRegistrationFormProps {
   event: {
-    id: string
-    title: string
-    tracks: string[]
-    maxParticipants?: string
-  }
-  onClose: () => void
-  onSubmit: (registration: any) => void
+    id: string;
+    title: string;
+    tracks: string[];
+    maxParticipants?: string;
+  };
+  onClose: () => void;
+  onSubmit: (registration: any) => void;
 }
 
-export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistrationFormProps) {
-  const { user } = useAuth()
-  const [registrationType, setRegistrationType] = useState<"individual" | "team">("individual")
+export function EventRegistrationForm({
+  event,
+  onClose,
+  onSubmit,
+}: EventRegistrationFormProps) {
+  const { user } = useAuth();
+  const [registrationType, setRegistrationType] = useState<
+    "individual" | "team"
+  >("individual");
   const [formData, setFormData] = useState({
     participantName: user?.name || "",
     email: user?.email || "",
@@ -44,10 +62,10 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
     teamDescription: "",
     lookingForTeammates: false,
     preferredTeamSize: "4",
-  })
+  });
 
-  const [newSkill, setNewSkill] = useState("")
-  const [error, setError] = useState("")
+  const [newSkill, setNewSkill] = useState("");
+  const [error, setError] = useState("");
 
   const skillSuggestions = [
     "JavaScript",
@@ -60,31 +78,46 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
     "Blockchain",
     "Data Science",
     "DevOps",
-  ]
+  ];
 
   const addSkill = (skill: string) => {
-    if (skill && !formData.skills.includes(skill)) {
-      setFormData((prev) => ({ ...prev, skills: [...prev.skills, skill] }))
-      setNewSkill("")
+    const trimmed = skill.trim();
+    if (!trimmed) return;
+
+    const normalized = trimmed.toLowerCase();
+    const alreadyExists = formData.skills.some(
+      (s) => s.trim().toLowerCase() === normalized
+    );
+
+    if (!alreadyExists) {
+      setFormData((prev) => ({
+        ...prev,
+        skills: [...prev.skills, trimmed],
+      }));
     }
-  }
+
+    setNewSkill("");
+  };
 
   const removeSkill = (skill: string) => {
-    setFormData((prev) => ({ ...prev, skills: prev.skills.filter((s) => s !== skill) }))
-  }
+    setFormData((prev) => ({
+      ...prev,
+      skills: prev.skills.filter((s) => s !== skill),
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
+    e.preventDefault();
+    setError("");
 
     if (!formData.track) {
-      setError("Please select a track")
-      return
+      setError("Please select a track");
+      return;
     }
 
     if (formData.skills.length === 0) {
-      setError("Please add at least one skill")
-      return
+      setError("Please add at least one skill");
+      return;
     }
 
     const registration = {
@@ -94,11 +127,11 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
       registrationType,
       registeredAt: new Date().toISOString(),
       status: "registered",
-    }
+    };
 
-    onSubmit(registration)
-    onClose()
-  }
+    onSubmit(registration);
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
@@ -107,7 +140,9 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>Register for {event.title}</CardTitle>
-              <CardDescription>Complete your registration to join this event</CardDescription>
+              <CardDescription>
+                Complete your registration to join this event
+              </CardDescription>
             </div>
             <Button variant="ghost" size="sm" onClick={onClose}>
               <X className="h-4 w-4" />
@@ -128,7 +163,9 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
               <div className="flex gap-4">
                 <Button
                   type="button"
-                  variant={registrationType === "individual" ? "default" : "outline"}
+                  variant={
+                    registrationType === "individual" ? "default" : "outline"
+                  }
                   onClick={() => setRegistrationType("individual")}
                   className="flex-1"
                 >
@@ -156,7 +193,12 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
                   <Input
                     id="name"
                     value={formData.participantName}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, participantName: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        participantName: e.target.value,
+                      }))
+                    }
                     required
                   />
                 </div>
@@ -166,7 +208,12 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
                     id="email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        email: e.target.value,
+                      }))
+                    }
                     required
                   />
                 </div>
@@ -178,7 +225,12 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
                   <Input
                     id="phone"
                     value={formData.phone}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        phone: e.target.value,
+                      }))
+                    }
                     required
                   />
                 </div>
@@ -187,7 +239,12 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
                   <Input
                     id="organization"
                     value={formData.organization}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, organization: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        organization: e.target.value,
+                      }))
+                    }
                   />
                 </div>
               </div>
@@ -200,14 +257,20 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
                 <Label htmlFor="track">Select Track</Label>
                 <Select
                   value={formData.track}
-                  onValueChange={(value) => setFormData((prev) => ({ ...prev, track: value }))}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({ ...prev, track: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Choose your track" />
                   </SelectTrigger>
                   <SelectContent>
                     {event.tracks.map((track) => (
-                      <SelectItem key={track} value={track}>
+                      <SelectItem
+                        className="cursor-pointer"
+                        key={track}
+                        value={track}
+                      >
                         {track}
                       </SelectItem>
                     ))}
@@ -219,32 +282,54 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
                 <Label htmlFor="experience">Experience Level</Label>
                 <Select
                   value={formData.experience}
-                  onValueChange={(value) => setFormData((prev) => ({ ...prev, experience: value }))}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({ ...prev, experience: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select your experience level" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="beginner">Beginner (0-1 years)</SelectItem>
-                    <SelectItem value="intermediate">Intermediate (2-4 years)</SelectItem>
-                    <SelectItem value="advanced">Advanced (5+ years)</SelectItem>
+                    <SelectItem className="cursor-pointer" value="beginner">
+                      Beginner (0-1 years)
+                    </SelectItem>
+                    <SelectItem className="cursor-pointer" value="intermediate">
+                      Intermediate (2-4 years)
+                    </SelectItem>
+                    <SelectItem className="cursor-pointer" value="advanced">
+                      Advanced (5+ years)
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
                 <Label>Skills & Technologies</Label>
+
                 <div className="flex gap-2">
                   <Input
                     value={newSkill}
                     onChange={(e) => setNewSkill(e.target.value)}
                     placeholder="Add a skill"
-                    onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addSkill(newSkill))}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        const trimmed = newSkill.trim();
+                        if (trimmed) addSkill(trimmed);
+                      }
+                    }}
                   />
-                  <Button type="button" onClick={() => addSkill(newSkill)}>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      const trimmed = newSkill.trim();
+                      if (trimmed) addSkill(trimmed);
+                    }}
+                  >
                     Add
                   </Button>
                 </div>
+
                 <div className="flex flex-wrap gap-2 mt-2">
                   {skillSuggestions.slice(0, 5).map((skill) => (
                     <Button
@@ -259,22 +344,41 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
                     </Button>
                   ))}
                 </div>
+
                 <div className="flex flex-wrap gap-2 mt-2">
                   {formData.skills.map((skill) => (
-                    <Badge key={skill} variant="secondary" className="flex items-center gap-1">
+                    <Badge
+                      key={skill}
+                      variant="secondary"
+                      className="flex items-center gap-1 pr-2"
+                    >
                       {skill}
-                      <X className="h-3 w-3 cursor-pointer" onClick={() => removeSkill(skill)} />
+                      <span
+                        onClick={() => removeSkill(skill)}
+                        className="ml-1 text-muted-foreground hover:text-destructive cursor-pointer"
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <X className="h-4 w-4" />
+                      </span>
                     </Badge>
                   ))}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="motivation">Why do you want to participate?</Label>
+                <Label htmlFor="motivation">
+                  Why do you want to participate?
+                </Label>
                 <Textarea
                   id="motivation"
                   value={formData.motivation}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, motivation: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      motivation: e.target.value,
+                    }))
+                  }
                   placeholder="Tell us about your motivation and what you hope to achieve..."
                   rows={3}
                 />
@@ -290,7 +394,12 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
                   <Input
                     id="teamName"
                     value={formData.teamName}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, teamName: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        teamName: e.target.value,
+                      }))
+                    }
                     placeholder="Enter your team name"
                     required={registrationType === "team"}
                   />
@@ -301,7 +410,12 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
                   <Textarea
                     id="teamDescription"
                     value={formData.teamDescription}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, teamDescription: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        teamDescription: e.target.value,
+                      }))
+                    }
                     placeholder="Describe your team's vision and approach..."
                     rows={3}
                   />
@@ -311,7 +425,12 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
                   <Label htmlFor="teamSize">Preferred Team Size</Label>
                   <Select
                     value={formData.preferredTeamSize}
-                    onValueChange={(value) => setFormData((prev) => ({ ...prev, preferredTeamSize: value }))}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        preferredTeamSize: value,
+                      }))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -334,10 +453,15 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
                   id="lookingForTeammates"
                   checked={formData.lookingForTeammates}
                   onCheckedChange={(checked) =>
-                    setFormData((prev) => ({ ...prev, lookingForTeammates: checked as boolean }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      lookingForTeammates: checked as boolean,
+                    }))
                   }
                 />
-                <Label htmlFor="lookingForTeammates">I'm looking for teammates</Label>
+                <Label htmlFor="lookingForTeammates">
+                  I'm looking for teammates
+                </Label>
               </div>
             )}
 
@@ -350,7 +474,12 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
                   <Input
                     id="dietary"
                     value={formData.dietaryRestrictions}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, dietaryRestrictions: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        dietaryRestrictions: e.target.value,
+                      }))
+                    }
                     placeholder="Any dietary restrictions or allergies"
                   />
                 </div>
@@ -359,7 +488,12 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
                   <Input
                     id="emergency"
                     value={formData.emergencyContact}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, emergencyContact: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        emergencyContact: e.target.value,
+                      }))
+                    }
                     placeholder="Emergency contact number"
                   />
                 </div>
@@ -378,5 +512,5 @@ export function EventRegistrationForm({ event, onClose, onSubmit }: EventRegistr
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

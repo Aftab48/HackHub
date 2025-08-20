@@ -1,14 +1,48 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Calendar, Users, Trophy, Zap, Shield, BarChart3, Github, Twitter, Linkedin, Mail, Heart } from "lucide-react"
-import Link from "next/link"
-import { useAuth } from "@/lib/auth-context"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Calendar,
+  Users,
+  Trophy,
+  Zap,
+  Shield,
+  BarChart3,
+  Github,
+  Linkedin,
+  Mail,
+  Heart,
+} from "lucide-react";
+import Link from "next/link";
+import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 
 export default function HomePage() {
-  const { user } = useAuth()
+  const { user } = useAuth();
+  const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  const handleClick = () => {
+    startTransition(() => {
+      if (!user) {
+        router.push("/auth/login");
+      } else if (user.role !== "organizer") {
+        setShowModal(true);
+      } else {
+        router.push("/events/manage");
+      }
+    });
+  };
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -38,8 +72,9 @@ export default function HomePage() {
               Host Amazing Hackathons & Tech Events
             </h1>
             <p className="text-base md:text-xl mb-6 md:mb-8 max-w-2xl mx-auto leading-relaxed text-[#896978] dark:text-[#EFECDD]">
-              Empower organizers, participants, and judges with our comprehensive platform featuring real-time
-              collaboration, automated workflows, and seamless event management.
+              Empower organizers, participants, and judges with our
+              comprehensive platform featuring real-time collaboration,
+              automated workflows, and seamless event management.
             </p>
             {!user ? (
               <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center items-center">
@@ -78,9 +113,12 @@ export default function HomePage() {
       <section className="py-12 md:py-20 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-12 md:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 neon-text">Everything You Need</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4 neon-text">
+              Everything You Need
+            </h2>
             <p className="text-base md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              From event creation to certificate generation, we've got every aspect of hackathon management covered.
+              From event creation to certificate generation, we've got every
+              aspect of hackathon management covered.
             </p>
           </div>
 
@@ -88,9 +126,12 @@ export default function HomePage() {
             <Card className="glass neon-border hover:scale-105 transition-all duration-300 animate-float group">
               <CardHeader className="p-4 md:p-6">
                 <Calendar className="h-10 w-10 md:h-12 md:w-12 text-primary mb-3 md:mb-4 group-hover:animate-pulse" />
-                <CardTitle className="text-lg md:text-xl">Event Management</CardTitle>
+                <CardTitle className="text-lg md:text-xl">
+                  Event Management
+                </CardTitle>
                 <CardDescription className="text-sm md:text-base">
-                  Configure events with themes, tracks, rules, timelines, prizes, and sponsor showcases
+                  Configure events with themes, tracks, rules, timelines,
+                  prizes, and sponsor showcases
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -101,9 +142,12 @@ export default function HomePage() {
             >
               <CardHeader className="p-4 md:p-6">
                 <Users className="h-10 w-10 md:h-12 md:w-12 text-secondary mb-3 md:mb-4 group-hover:animate-pulse" />
-                <CardTitle className="text-lg md:text-xl">Team Formation</CardTitle>
+                <CardTitle className="text-lg md:text-xl">
+                  Team Formation
+                </CardTitle>
                 <CardDescription className="text-sm md:text-base">
-                  Easy registration, team building, and collaboration tools with invite systems
+                  Easy registration, team building, and collaboration tools with
+                  invite systems
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -114,9 +158,12 @@ export default function HomePage() {
             >
               <CardHeader className="p-4 md:p-6">
                 <Trophy className="h-10 w-10 md:h-12 md:w-12 text-primary mb-3 md:mb-4 group-hover:animate-pulse" />
-                <CardTitle className="text-lg md:text-xl">Project Evaluation</CardTitle>
+                <CardTitle className="text-lg md:text-xl">
+                  Project Evaluation
+                </CardTitle>
                 <CardDescription className="text-sm md:text-base">
-                  Comprehensive submission system with multi-round judging and real-time feedback
+                  Comprehensive submission system with multi-round judging and
+                  real-time feedback
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -127,9 +174,12 @@ export default function HomePage() {
             >
               <CardHeader className="p-4 md:p-6">
                 <Zap className="h-10 w-10 md:h-12 md:w-12 text-secondary mb-3 md:mb-4 group-hover:animate-pulse" />
-                <CardTitle className="text-lg md:text-xl">Real-time Updates</CardTitle>
+                <CardTitle className="text-lg md:text-xl">
+                  Real-time Updates
+                </CardTitle>
                 <CardDescription className="text-sm md:text-base">
-                  Live announcements, Q&A channels, and instant notifications for all participants
+                  Live announcements, Q&A channels, and instant notifications
+                  for all participants
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -140,9 +190,12 @@ export default function HomePage() {
             >
               <CardHeader className="p-4 md:p-6">
                 <Shield className="h-10 w-10 md:h-12 md:w-12 text-primary mb-3 md:mb-4 group-hover:animate-pulse" />
-                <CardTitle className="text-lg md:text-xl">Web3 Integration</CardTitle>
+                <CardTitle className="text-lg md:text-xl">
+                  Web3 Integration
+                </CardTitle>
                 <CardDescription className="text-sm md:text-base text-[#896978] dark:text-[#EFECDD]">
-                  Proof of Participation (POAP) and NFT badges for verified event participation
+                  Proof of Participation (POAP) and NFT badges for verified
+                  event participation
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -153,9 +206,12 @@ export default function HomePage() {
             >
               <CardHeader className="p-4 md:p-6">
                 <BarChart3 className="h-10 w-10 md:h-12 md:w-12 text-secondary mb-3 md:mb-4 group-hover:animate-pulse" />
-                <CardTitle className="text-lg md:text-xl">Analytics Dashboard</CardTitle>
+                <CardTitle className="text-lg md:text-xl">
+                  Analytics Dashboard
+                </CardTitle>
                 <CardDescription className="text-sm md:text-base">
-                  Comprehensive insights, leaderboards, and automated certificate generation
+                  Comprehensive insights, leaderboards, and automated
+                  certificate generation
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -180,16 +236,17 @@ export default function HomePage() {
               Ready to Host Your Next Hackathon?
             </h2>
             <p className="text-base md:text-xl mb-6 md:mb-8 opacity-90">
-              Join thousands of organizers who trust HackHub to deliver exceptional hackathon experiences.
+              Join thousands of organizers who trust HackHub to deliver
+              exceptional hackathon experiences.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center items-center">
               <Button
                 size="lg"
                 variant="secondary"
                 className="text-base md:text-lg px-6 md:px-8 w-full sm:w-auto hover:scale-105 transition-transform animate-glow bg-[#489299] hover:bg-[#0B3C49] text-[#EFECDD] [box-shadow:0_0_20px_#DCF763] dark:bg-[#DCF763] dark:hover:bg-[#896978] dark:text-[#0B3C49] dark:[box-shadow:0_0_20px_#489299]"
-                asChild
+                onClick={handleClick}
               >
-                <Link href="/events/manage">Create Your Event</Link>
+                Create Your Event
               </Button>
               <Button
                 size="lg"
@@ -197,7 +254,7 @@ export default function HomePage() {
                 className="text-base md:text-lg px-6 md:px-8 border-white text-white hover:bg-white hover:text-primary glass w-full sm:w-auto hover:scale-105 transition-transform bg-transparent"
                 asChild
               >
-                <Link href="/events">View Demo</Link>
+                <Link href="/events">View Events</Link>
               </Button>
             </div>
           </div>
@@ -228,7 +285,8 @@ export default function HomePage() {
                   HackHub
                 </h3>
                 <p className="text-sm md:text-base text-[#896978] dark:text-[#EFECDD] mb-4 leading-relaxed">
-                  Empowering the next generation of innovators through seamless hackathon experiences.
+                  Empowering the next generation of innovators through seamless
+                  hackathon experiences.
                 </p>
                 <div className="flex gap-3">
                   <Button
@@ -237,11 +295,11 @@ export default function HomePage() {
                     className="p-2 glass neon-border hover:scale-110 transition-transform bg-[#489299]/20 hover:bg-[#DCF763]/30 text-[#489299] dark:bg-[#896978]/20 dark:hover:bg-[#DCF763]/30 dark:text-[#EFECDD]"
                     asChild
                   >
-                    <Link href="https://github.com" target="_blank">
+                    <Link href="https://github.com/Aftab48" target="_blank">
                       <Github className="h-4 w-4" />
                     </Link>
                   </Button>
-                  <Button
+                  {/* <Button
                     size="sm"
                     variant="ghost"
                     className="p-2 glass neon-border hover:scale-110 transition-transform bg-[#489299]/20 hover:bg-[#DCF763]/30 text-[#489299] dark:bg-[#896978]/20 dark:hover:bg-[#DCF763]/30 dark:text-[#EFECDD]"
@@ -250,14 +308,17 @@ export default function HomePage() {
                     <Link href="https://twitter.com" target="_blank">
                       <Twitter className="h-4 w-4" />
                     </Link>
-                  </Button>
+                  </Button> */}
                   <Button
                     size="sm"
                     variant="ghost"
                     className="p-2 glass neon-border hover:scale-110 transition-transform bg-[#489299]/20 hover:bg-[#DCF763]/30 text-[#489299] dark:bg-[#896978]/20 dark:hover:bg-[#DCF763]/30 dark:text-[#EFECDD]"
                     asChild
                   >
-                    <Link href="https://linkedin.com" target="_blank">
+                    <Link
+                      href="https://www.linkedin.com/in/aftab-alam-53b521246/"
+                      target="_blank"
+                    >
                       <Linkedin className="h-4 w-4" />
                     </Link>
                   </Button>
@@ -267,7 +328,7 @@ export default function HomePage() {
                     className="p-2 glass neon-border hover:scale-110 transition-transform bg-[#489299]/20 hover:bg-[#DCF763]/30 text-[#489299] dark:bg-[#896978]/20 dark:hover:bg-[#DCF763]/30 dark:text-[#EFECDD]"
                     asChild
                   >
-                    <Link href="mailto:hello@hackhub.com">
+                    <Link href="mailto:mdalam4884@gmail.com">
                       <Mail className="h-4 w-4" />
                     </Link>
                   </Button>
@@ -413,5 +474,5 @@ export default function HomePage() {
         </div>
       </footer>
     </div>
-  )
+  );
 }

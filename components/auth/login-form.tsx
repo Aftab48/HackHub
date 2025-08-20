@@ -84,10 +84,6 @@ export function LoginForm() {
             Sign In
           </Button>
         </form>
-
-        <div className="mt-4 text-center text-sm text-muted-foreground">
-          Demo credentials: any email/password combination
-        </div>
       </CardContent>
     </Card>
   );

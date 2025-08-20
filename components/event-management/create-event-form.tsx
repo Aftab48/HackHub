@@ -24,6 +24,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { createEvent } from "@/lib/actions/organizer.actions";
+import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
 
 interface CreateEventFormProps {
   onClose: () => void;
@@ -81,18 +83,28 @@ export function CreateEventForm({ onClose }: CreateEventFormProps) {
     }));
   };
 
+  const { user } = useAuth();
+  const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      router.push("/auth/login");
+      return;
+    }
 
     try {
-      const newEvent = await createEvent({
-        ...formData,
-        startDate: new Date(formData.startDate).toISOString(),
-        endDate: new Date(formData.endDate).toISOString(),
-        status: "draft",
-        participants: 0,
-        submissions: 0,
-      });
+      const newEvent = await createEvent(
+        {
+          ...formData,
+          startDate: new Date(formData.startDate).toISOString(),
+          endDate: new Date(formData.endDate).toISOString(),
+          status: "draft",
+          participants: 0,
+          submissions: 0,
+        },
+        user.id
+      );
 
       console.log("✅ Event created:", newEvent);
       onClose();
@@ -265,6 +277,7 @@ export function CreateEventForm({ onClose }: CreateEventFormProps) {
               </Label>
               <Input
                 id="prizePool"
+                type="number"
                 value={formData.prizePool}
                 onChange={(e) =>
                   setFormData((prev) => ({

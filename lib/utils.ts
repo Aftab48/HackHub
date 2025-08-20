@@ -35,3 +35,12 @@ export function toDate(str: string) {
 export function dateToString(date: Date) {
   return date.toISOString();
 }
+
+export const formatDate = (dateString: string) => {
+  if (!dateString) return "TBD";
+  return new Date(dateString).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
