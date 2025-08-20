@@ -2,7 +2,7 @@
 
 **Event & Theme Hosting Platform**
 
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![License:MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Node.js](https://img.shields.io/badge/Node.js-v18+-green)
 ![Next.js](https://img.shields.io/badge/Next.js-13+-black)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Geospatial-brightgreen)
