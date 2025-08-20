@@ -2,6 +2,14 @@
 
 **Event & Theme Hosting Platform**
 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Node.js](https://img.shields.io/badge/Node.js-v18+-green)
+![Next.js](https://img.shields.io/badge/Next.js-13+-black)
+![MongoDB](https://img.shields.io/badge/MongoDB-Geospatial-brightgreen)
+![Microsoft-Azure](https://img.shields.io/badge/Microsoft-Azure-blue)
+![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black)
+
+
 HackHub is a modern, scalable Event & Hackathon Hosting Website that empowers organizers, participants, and judges with smooth workflows and real-time engagement.
 
 ---
