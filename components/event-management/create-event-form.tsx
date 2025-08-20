@@ -1,72 +1,106 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { X } from "lucide-react"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
+import { createEvent } from "@/lib/actions/organizer.actions";
 
 interface CreateEventFormProps {
-  onClose: () => void
-  onSubmit: (event: any) => void
+  onClose: () => void;
+  onSubmit: (event: any) => void;
 }
 
-export function CreateEventForm({ onClose, onSubmit }: CreateEventFormProps) {
+export function CreateEventForm({ onClose }: CreateEventFormProps) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     startDate: "",
     endDate: "",
     location: "",
-    type: "hybrid",
-    maxParticipants: "",
-    prizePool: "",
+    type: "online" as "online" | "in-person" | "hybrid",
+    maxParticipants: 0,
+    prizePool: 0,
     tracks: [] as string[],
     sponsors: [] as string[],
-  })
+  });
 
-  const [newTrack, setNewTrack] = useState("")
-  const [newSponsor, setNewSponsor] = useState("")
+  const [newTrack, setNewTrack] = useState("");
+  const [newSponsor, setNewSponsor] = useState("");
 
   const addTrack = () => {
     if (newTrack.trim() && !formData.tracks.includes(newTrack.trim())) {
-      setFormData((prev) => ({ ...prev, tracks: [...prev.tracks, newTrack.trim()] }))
-      setNewTrack("")
+      setFormData((prev) => ({
+        ...prev,
+        tracks: [...prev.tracks, newTrack.trim()],
+      }));
+      setNewTrack("");
     }
-  }
+  };
 
   const removeTrack = (track: string) => {
-    setFormData((prev) => ({ ...prev, tracks: prev.tracks.filter((t) => t !== track) }))
-  }
+    setFormData((prev) => ({
+      ...prev,
+      tracks: prev.tracks.filter((t) => t !== track),
+    }));
+  };
 
   const addSponsor = () => {
     if (newSponsor.trim() && !formData.sponsors.includes(newSponsor.trim())) {
-      setFormData((prev) => ({ ...prev, sponsors: [...prev.sponsors, newSponsor.trim()] }))
-      setNewSponsor("")
+      setFormData((prev) => ({
+        ...prev,
+        sponsors: [...prev.sponsors, newSponsor.trim()],
+      }));
+      setNewSponsor("");
     }
-  }
+  };
 
   const removeSponsor = (sponsor: string) => {
-    setFormData((prev) => ({ ...prev, sponsors: prev.sponsors.filter((s) => s !== sponsor) }))
-  }
+    setFormData((prev) => ({
+      ...prev,
+      sponsors: prev.sponsors.filter((s) => s !== sponsor),
+    }));
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit({
-      ...formData,
-      id: Date.now().toString(),
-      status: "draft",
-      participants: 0,
-      submissions: 0,
-    })
-    onClose()
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const newEvent = await createEvent({
+        ...formData,
+        startDate: new Date(formData.startDate).toISOString(),
+        endDate: new Date(formData.endDate).toISOString(),
+        status: "draft",
+        participants: 0,
+        submissions: 0,
+      });
+
+      console.log("✅ Event created:", newEvent);
+      onClose();
+    } catch (err) {
+      console.error("❌ Failed to create event:", err);
+      alert("Failed to create event. Please try again.");
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-2 md:p-4 z-50">
@@ -74,8 +108,12 @@ export function CreateEventForm({ onClose, onSubmit }: CreateEventFormProps) {
         <CardHeader className="pb-4 md:pb-6">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-lg md:text-xl">Create New Event</CardTitle>
-              <CardDescription className="text-sm md:text-base">Set up your hackathon or tech event</CardDescription>
+              <CardTitle className="text-lg md:text-xl">
+                Create New Event
+              </CardTitle>
+              <CardDescription className="text-sm md:text-base">
+                Set up your hackathon or tech event
+              </CardDescription>
             </div>
             <Button variant="ghost" size="sm" onClick={onClose}>
               <X className="h-4 w-4" />
@@ -92,7 +130,9 @@ export function CreateEventForm({ onClose, onSubmit }: CreateEventFormProps) {
                 <Input
                   id="title"
                   value={formData.title}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, title: e.target.value }))
+                  }
                   placeholder="AI Innovation Hackathon"
                   required
                 />
@@ -103,14 +143,19 @@ export function CreateEventForm({ onClose, onSubmit }: CreateEventFormProps) {
                 </Label>
                 <Select
                   value={formData.type}
-                  onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value }))}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      type: value as "online" | "in-person" | "hybrid",
+                    }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="online">Online</SelectItem>
-                    <SelectItem value="offline">In-Person</SelectItem>
+                    <SelectItem value="in-person">In-Person</SelectItem>
                     <SelectItem value="hybrid">Hybrid</SelectItem>
                   </SelectContent>
                 </Select>
@@ -124,7 +169,12 @@ export function CreateEventForm({ onClose, onSubmit }: CreateEventFormProps) {
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
                 placeholder="Describe your event, goals, and what participants can expect..."
                 rows={3}
                 required
@@ -141,7 +191,12 @@ export function CreateEventForm({ onClose, onSubmit }: CreateEventFormProps) {
                   id="startDate"
                   type="datetime-local"
                   value={formData.startDate}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, startDate: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      startDate: e.target.value,
+                    }))
+                  }
                   required
                 />
               </div>
@@ -153,7 +208,12 @@ export function CreateEventForm({ onClose, onSubmit }: CreateEventFormProps) {
                   id="endDate"
                   type="datetime-local"
                   value={formData.endDate}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, endDate: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      endDate: e.target.value,
+                    }))
+                  }
                   required
                 />
               </div>
@@ -167,20 +227,33 @@ export function CreateEventForm({ onClose, onSubmit }: CreateEventFormProps) {
                 <Input
                   id="location"
                   value={formData.location}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, location: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      location: e.target.value,
+                    }))
+                  }
                   placeholder="San Francisco, CA or Virtual"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="maxParticipants" className="text-sm md:text-base">
+                <Label
+                  htmlFor="maxParticipants"
+                  className="text-sm md:text-base"
+                >
                   Max Participants
                 </Label>
                 <Input
                   id="maxParticipants"
                   type="number"
                   value={formData.maxParticipants}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, maxParticipants: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      maxParticipants: Number(e.target.value),
+                    }))
+                  }
                   placeholder="500"
                 />
               </div>
@@ -193,7 +266,12 @@ export function CreateEventForm({ onClose, onSubmit }: CreateEventFormProps) {
               <Input
                 id="prizePool"
                 value={formData.prizePool}
-                onChange={(e) => setFormData((prev) => ({ ...prev, prizePool: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    prizePool: Number(e.target.value),
+                  }))
+                }
                 placeholder="$50,000"
               />
             </div>
@@ -205,18 +283,31 @@ export function CreateEventForm({ onClose, onSubmit }: CreateEventFormProps) {
                   value={newTrack}
                   onChange={(e) => setNewTrack(e.target.value)}
                   placeholder="Add a track (e.g., AI/ML, Web3, Mobile)"
-                  onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTrack())}
+                  onKeyPress={(e) =>
+                    e.key === "Enter" && (e.preventDefault(), addTrack())
+                  }
                   className="flex-1"
                 />
-                <Button type="button" onClick={addTrack} className="w-full sm:w-auto">
+                <Button
+                  type="button"
+                  onClick={addTrack}
+                  className="w-full sm:w-auto"
+                >
                   Add
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2 mt-2">
                 {formData.tracks.map((track) => (
-                  <Badge key={track} variant="secondary" className="flex items-center gap-1 text-xs">
+                  <Badge
+                    key={track}
+                    variant="secondary"
+                    className="flex items-center gap-1 text-xs"
+                  >
                     <span className="truncate max-w-[120px]">{track}</span>
-                    <X className="h-3 w-3 cursor-pointer flex-shrink-0" onClick={() => removeTrack(track)} />
+                    <X
+                      className="h-3 w-3 cursor-pointer flex-shrink-0"
+                      onClick={() => removeTrack(track)}
+                    />
                   </Badge>
                 ))}
               </div>
@@ -229,18 +320,31 @@ export function CreateEventForm({ onClose, onSubmit }: CreateEventFormProps) {
                   value={newSponsor}
                   onChange={(e) => setNewSponsor(e.target.value)}
                   placeholder="Add a sponsor"
-                  onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addSponsor())}
+                  onKeyPress={(e) =>
+                    e.key === "Enter" && (e.preventDefault(), addSponsor())
+                  }
                   className="flex-1"
                 />
-                <Button type="button" onClick={addSponsor} className="w-full sm:w-auto">
+                <Button
+                  type="button"
+                  onClick={addSponsor}
+                  className="w-full sm:w-auto"
+                >
                   Add
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2 mt-2">
                 {formData.sponsors.map((sponsor) => (
-                  <Badge key={sponsor} variant="outline" className="flex items-center gap-1 text-xs">
+                  <Badge
+                    key={sponsor}
+                    variant="outline"
+                    className="flex items-center gap-1 text-xs"
+                  >
                     <span className="truncate max-w-[120px]">{sponsor}</span>
-                    <X className="h-3 w-3 cursor-pointer flex-shrink-0" onClick={() => removeSponsor(sponsor)} />
+                    <X
+                      className="h-3 w-3 cursor-pointer flex-shrink-0"
+                      onClick={() => removeSponsor(sponsor)}
+                    />
                   </Badge>
                 ))}
               </div>
@@ -250,7 +354,12 @@ export function CreateEventForm({ onClose, onSubmit }: CreateEventFormProps) {
               <Button type="submit" className="flex-1">
                 Create Event
               </Button>
-              <Button type="button" variant="outline" onClick={onClose} className="flex-1 sm:flex-none bg-transparent">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                className="flex-1 sm:flex-none bg-transparent"
+              >
                 Cancel
               </Button>
             </div>
@@ -258,5 +367,5 @@ export function CreateEventForm({ onClose, onSubmit }: CreateEventFormProps) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

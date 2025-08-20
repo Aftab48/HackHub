@@ -1,41 +1,48 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useAuth } from "@/lib/auth-context"
-import { Users, UserPlus, Mail, Crown, Settings, Search } from "lucide-react"
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/lib/auth-context";
+import { Users, UserPlus, Mail, Crown, Settings, Search } from "lucide-react";
+import { testDb } from "@/lib/actions/tests.actions";
 
 interface TeamMember {
-  id: string
-  name: string
-  email: string
-  role: "leader" | "member"
-  skills: string[]
-  avatar?: string
-  joinedAt: string
+  id: string;
+  name: string;
+  email: string;
+  role: "leader" | "member";
+  skills: string[];
+  avatar?: string;
+  joinedAt: string;
 }
 
 interface Team {
-  id: string
-  name: string
-  description: string
-  eventId: string
-  eventTitle: string
-  members: TeamMember[]
-  maxMembers: number
-  isOpen: boolean
-  createdAt: string
+  id: string;
+  name: string;
+  description: string;
+  eventId: string;
+  eventTitle: string;
+  members: TeamMember[];
+  maxMembers: number;
+  isOpen: boolean;
+  createdAt: string;
 }
 
 export function TeamManagement() {
-  const { user } = useAuth()
-  const [inviteEmail, setInviteEmail] = useState("")
-  const [searchQuery, setSearchQuery] = useState("")
+  const { user } = useAuth();
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Mock data - in real app, this would come from your backend
   const [myTeams] = useState<Team[]>([
@@ -69,7 +76,7 @@ export function TeamManagement() {
         },
       ],
     },
-  ])
+  ]);
 
   const [availableTeams] = useState<Team[]>([
     {
@@ -123,41 +130,55 @@ export function TeamManagement() {
         },
       ],
     },
-  ])
+  ]);
 
   const handleInviteMember = (teamId: string) => {
-    if (!inviteEmail) return
+    if (!inviteEmail) return;
     // In real app, send invitation
-    console.log(`Inviting ${inviteEmail} to team ${teamId}`)
-    setInviteEmail("")
-  }
+    console.log(`Inviting ${inviteEmail} to team ${teamId}`);
+    setInviteEmail("");
+  };
 
   const handleJoinTeam = (teamId: string) => {
-    console.log(`Joining team ${teamId}`)
-  }
+    console.log(`Joining team ${teamId}`);
+  };
 
   const filteredAvailableTeams = availableTeams.filter(
     (team) =>
       team.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      team.description.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+      team.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="space-y-4 sm:space-y-6">
       <div>
         <h2 className="text-xl sm:text-2xl font-bold mb-2">Team Management</h2>
-        <p className="text-sm sm:text-base text-muted-foreground">Manage your teams and find new teammates</p>
+        <p className="text-sm sm:text-base text-muted-foreground">
+          Manage your teams and find new teammates
+        </p>
       </div>
 
       <Tabs defaultValue="my-teams" className="space-y-4 sm:space-y-6">
         <TabsList className="grid w-full grid-cols-2 h-auto">
-          <TabsTrigger value="my-teams" className="text-xs sm:text-sm px-2 py-2">
-            <span className="hidden sm:inline">My Teams ({myTeams.length})</span>
+          <TabsTrigger
+            value="my-teams"
+            className="text-xs sm:text-sm px-2 py-2"
+          >
+            <span className="hidden sm:inline">
+              My Teams ({myTeams.length})
+            </span>
             <span className="sm:hidden">My Teams({myTeams.length})</span>
           </TabsTrigger>
-          <TabsTrigger value="find-teams" className="text-xs sm:text-sm px-2 py-2">
-            <span className="hidden sm:inline">Find Teams ({filteredAvailableTeams.length})</span>
-            <span className="sm:hidden">Find Teams ({filteredAvailableTeams.length})</span>
+          <TabsTrigger
+            value="find-teams"
+            className="text-xs sm:text-sm px-2 py-2"
+          >
+            <span className="hidden sm:inline">
+              Find Teams ({filteredAvailableTeams.length})
+            </span>
+            <span className="sm:hidden">
+              Find Teams ({filteredAvailableTeams.length})
+            </span>
           </TabsTrigger>
         </TabsList>
 
@@ -166,7 +187,9 @@ export function TeamManagement() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-8 sm:py-12">
                 <Users className="h-8 w-8 sm:h-12 sm:w-12 text-muted-foreground mb-4" />
-                <h3 className="text-base sm:text-lg font-medium mb-2">No teams yet</h3>
+                <h3 className="text-base sm:text-lg font-medium mb-2">
+                  No teams yet
+                </h3>
                 <p className="text-sm sm:text-base text-muted-foreground text-center mb-4 px-4">
                   Join a team or create one when registering for an event
                 </p>
@@ -185,9 +208,16 @@ export function TeamManagement() {
                             <span className="truncate">{team.eventTitle}</span>
                           </Badge>
                         </CardTitle>
-                        <CardDescription className="text-sm mt-1">{team.description}</CardDescription>
+                        <CardDescription className="text-sm mt-1">
+                          {team.description}
+                        </CardDescription>
                       </div>
-                      <Button variant="ghost" size="sm" className="self-start sm:self-auto">
+                      <Button
+                        onClick={() => testDb().then(console.log)}
+                        variant="ghost"
+                        size="sm"
+                        className="self-start sm:self-auto"
+                      >
                         <Settings className="h-4 w-4" />
                       </Button>
                     </div>
@@ -200,13 +230,18 @@ export function TeamManagement() {
                           {team.members.length} / {team.maxMembers} members
                         </span>
                       </div>
-                      <Badge variant={team.isOpen ? "default" : "secondary"} className="w-fit">
+                      <Badge
+                        variant={team.isOpen ? "default" : "secondary"}
+                        className="w-fit"
+                      >
                         {team.isOpen ? "Open" : "Closed"}
                       </Badge>
                     </div>
 
                     <div className="space-y-3">
-                      <h4 className="font-medium text-sm sm:text-base">Team Members</h4>
+                      <h4 className="font-medium text-sm sm:text-base">
+                        Team Members
+                      </h4>
                       <div className="space-y-2">
                         {team.members.map((member) => (
                           <div
@@ -215,24 +250,37 @@ export function TeamManagement() {
                           >
                             <div className="flex items-center gap-3 min-w-0 flex-1">
                               <Avatar className="h-8 w-8 flex-shrink-0">
-                                <AvatarImage src={member.avatar || "/placeholder.svg"} />
-                                <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+                                <AvatarImage
+                                  src={member.avatar || "/placeholder.svg"}
+                                />
+                                <AvatarFallback>
+                                  {member.name.charAt(0)}
+                                </AvatarFallback>
                               </Avatar>
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <span className="font-medium text-sm truncate">{member.name}</span>
+                                  <span className="font-medium text-sm truncate">
+                                    {member.name}
+                                  </span>
                                   {member.role === "leader" && (
                                     <Crown className="h-4 w-4 text-yellow-500 flex-shrink-0" />
                                   )}
                                 </div>
                                 <div className="flex flex-wrap gap-1">
                                   {member.skills.slice(0, 2).map((skill) => (
-                                    <Badge key={skill} variant="outline" className="text-xs">
+                                    <Badge
+                                      key={skill}
+                                      variant="outline"
+                                      className="text-xs"
+                                    >
                                       {skill}
                                     </Badge>
                                   ))}
                                   {member.skills.length > 2 && (
-                                    <Badge variant="outline" className="text-xs">
+                                    <Badge
+                                      variant="outline"
+                                      className="text-xs"
+                                    >
                                       +{member.skills.length - 2}
                                     </Badge>
                                   )}
@@ -249,7 +297,9 @@ export function TeamManagement() {
 
                     {team.isOpen && team.members.length < team.maxMembers && (
                       <div className="space-y-2">
-                        <h4 className="font-medium text-sm sm:text-base">Invite Members</h4>
+                        <h4 className="font-medium text-sm sm:text-base">
+                          Invite Members
+                        </h4>
                         <div className="flex flex-col sm:flex-row gap-2">
                           <Input
                             placeholder="Enter email address"
@@ -257,7 +307,10 @@ export function TeamManagement() {
                             onChange={(e) => setInviteEmail(e.target.value)}
                             className="text-sm"
                           />
-                          <Button onClick={() => handleInviteMember(team.id)} className="sm:w-auto">
+                          <Button
+                            onClick={() => handleInviteMember(team.id)}
+                            className="sm:w-auto"
+                          >
                             <Mail className="h-4 w-4 mr-2" />
                             Invite
                           </Button>
@@ -290,16 +343,23 @@ export function TeamManagement() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-8 sm:py-12">
                 <Users className="h-8 w-8 sm:h-12 sm:w-12 text-muted-foreground mb-4" />
-                <h3 className="text-base sm:text-lg font-medium mb-2">No teams found</h3>
+                <h3 className="text-base sm:text-lg font-medium mb-2">
+                  No teams found
+                </h3>
                 <p className="text-sm sm:text-base text-muted-foreground text-center px-4">
-                  {searchQuery ? "Try adjusting your search terms" : "No teams are currently looking for members"}
+                  {searchQuery
+                    ? "Try adjusting your search terms"
+                    : "No teams are currently looking for members"}
                 </p>
               </CardContent>
             </Card>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {filteredAvailableTeams.map((team) => (
-                <Card key={team.id} className="hover:shadow-lg transition-shadow">
+                <Card
+                  key={team.id}
+                  className="hover:shadow-lg transition-shadow"
+                >
                   <CardHeader className="pb-3 sm:pb-6">
                     <div className="flex justify-between items-start">
                       <div className="min-w-0 flex-1">
@@ -309,7 +369,9 @@ export function TeamManagement() {
                             <span className="truncate">{team.eventTitle}</span>
                           </Badge>
                         </CardTitle>
-                        <CardDescription className="text-sm mt-1">{team.description}</CardDescription>
+                        <CardDescription className="text-sm mt-1">
+                          {team.description}
+                        </CardDescription>
                       </div>
                     </div>
                   </CardHeader>
@@ -330,9 +392,16 @@ export function TeamManagement() {
                       <h4 className="font-medium text-sm">Current Members</h4>
                       <div className="flex -space-x-2">
                         {team.members.slice(0, 3).map((member) => (
-                          <Avatar key={member.id} className="h-8 w-8 border-2 border-background">
-                            <AvatarImage src={member.avatar || "/placeholder.svg"} />
-                            <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+                          <Avatar
+                            key={member.id}
+                            className="h-8 w-8 border-2 border-background"
+                          >
+                            <AvatarImage
+                              src={member.avatar || "/placeholder.svg"}
+                            />
+                            <AvatarFallback>
+                              {member.name.charAt(0)}
+                            </AvatarFallback>
                           </Avatar>
                         ))}
                         {team.members.length > 3 && (
@@ -347,14 +416,21 @@ export function TeamManagement() {
                       <h4 className="font-medium text-sm">Skills Needed</h4>
                       <div className="flex flex-wrap gap-1">
                         {["UI/UX", "Backend", "Mobile"].map((skill) => (
-                          <Badge key={skill} variant="secondary" className="text-xs">
+                          <Badge
+                            key={skill}
+                            variant="secondary"
+                            className="text-xs"
+                          >
                             {skill}
                           </Badge>
                         ))}
                       </div>
                     </div>
 
-                    <Button onClick={() => handleJoinTeam(team.id)} className="w-full">
+                    <Button
+                      onClick={() => handleJoinTeam(team.id)}
+                      className="w-full"
+                    >
                       <UserPlus className="h-4 w-4 mr-2" />
                       Request to Join
                     </Button>
@@ -366,5 +442,5 @@ export function TeamManagement() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
