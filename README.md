@@ -24,7 +24,6 @@ HackHub is a modern, scalable Event & Hackathon Hosting Website that empowers or
 - Analytics dashboard for organizers
 - Leaderboard for participants
 - Automated certificate generation for participants
-- 
 
   ***
 
